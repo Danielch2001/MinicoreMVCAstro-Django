@@ -54,7 +54,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Dirección del frontend
+    "http://localhost:4321",  # Dirección del frontend
 ]
 
 ROOT_URLCONF = 'backend.urls'
