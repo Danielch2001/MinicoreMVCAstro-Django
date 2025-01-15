@@ -1,9 +1,44 @@
 ---
-import ItemList from '../components/ItemList.jsx';
+import '../styles/styles.css';
 ---
 <html>
-    <body>
-        <h1>Lista de Items</h1>
-        <ItemList />
-    </body>
+  <head>
+    <title>Consulta de Gastos</title>
+  </head>
+  <body>
+    <header>
+      <h1>Consulta de Gastos por Departamento</h1>
+    </header>
+    <main>
+      <!-- Formulario para las fechas -->
+      <section class="form-container">
+        <label for="fecha-inicio">Fecha Inicio:</label>
+        <input type="date" id="fecha-inicio" required />
+
+        <label for="fecha-fin">Fecha Fin:</label>
+        <input type="date" id="fecha-fin" required />
+
+        <button id="buscar-btn">Buscar</button>
+      </section>
+
+      <!-- Tabla para mostrar los resultados -->
+      <section class="table-container">
+        <table id="resultados">
+          <thead>
+            <tr>
+              <th>Departamento</th>
+              <th>Total (USD)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Aquí se insertarán los datos dinámicamente -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+    <footer>
+      <p>Consulta de gastos © 2025</p>
+    </footer>
+    <script src="/src/scripts/script.js" type="module"></script>
+  </body>
 </html>
