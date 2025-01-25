@@ -5,7 +5,7 @@ const ItemList = () => {
     const [items, setItems] = useState([]);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/items/')
+        axios.get('https://backend-service.onrender.com/api/items/')
             .then(response => setItems(response.data))
             .catch(error => console.error(error));
     }, []);

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-_0#yrf#xa&=b7nw$b051eb)1-^)32u_9mcxwn4p!ma03do(q)@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["https://backend-django-minicore.onrender.com", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["https://minicoremvcastro-django.onrender.com", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -52,9 +52,11 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     
 ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4321",  # Dirección del frontend
+    "https://minicoremvcastro-django.onrender.com",
     
 ]
 
