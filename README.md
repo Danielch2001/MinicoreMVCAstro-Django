@@ -146,4 +146,4 @@ Desarrollado por **Daniel Chicaiza**
 ---
 
 ## **📜 Licencia**
-Este proyecto está bajo la licencia **MIT**.
+Este proyecto está bajo la licencia **UDLA**.
