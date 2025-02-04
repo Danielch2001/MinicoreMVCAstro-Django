@@ -148,17 +148,26 @@ pipeline {
         }
 
         stage('Push to GitHub') {
-            steps {
-                echo "🚀 Subiendo cambios a GitHub para que Railway los despliegue..."
-                sh '''
-                git config --global user.email "tu-email@example.com"
-                git config --global user.name "Jenkins CI"
-                git add .
-                git commit -m "🚀 Auto-deploy desde Jenkins"
-                git push origin main
-                '''
-            }
-        }        
+    steps {
+        echo "🚀 Subiendo cambios a GitHub para que Railway los despliegue..."
+        sh '''
+        git config --global user.email "tu-email@example.com"
+        git config --global user.name "Jenkins CI"
+        git add .
+        
+        # Verificar si hay cambios
+        if git diff --quiet && git diff --staged --quiet; then
+            echo "⚠️ No hay cambios detectados, enviando un commit vacío..."
+            git commit --allow-empty -m "🚀 Auto-deploy desde Jenkins (sin cambios)"
+        else
+            git commit -m "🚀 Auto-deploy desde Jenkins"
+        fi
+        
+        git push origin main
+        '''
+    }
+}
+     
     }
 
     post {
