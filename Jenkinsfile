@@ -34,19 +34,7 @@ pipeline {
             }
         }
 
-        stage('Verify Backend Files') {
-            steps {
-                sh 'docker-compose exec backend ls -lah /app || true'
-                sh 'docker-compose exec backend find /app || true'
-            }
-        }
-
-        stage('Verify Frontend Files') {
-            steps {
-                sh 'docker-compose exec frontend ls -lah /app || true'
-                sh 'docker-compose exec frontend find /app || true'
-            }
-        }
+        
         stage('Verify Backend Files') {
     steps {
         echo "🛠️ Verificando archivos en el contenedor backend..."
