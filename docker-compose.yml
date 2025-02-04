@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
+      - ./backend:/app  # Asegurar que está bien mapeado
     depends_on:
       - postgres_db
     restart: always
@@ -22,7 +22,7 @@ services:
     ports:
       - "4321:4321"
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app  # Asegurar que está bien mapeado
     depends_on:
       - backend
     restart: always
