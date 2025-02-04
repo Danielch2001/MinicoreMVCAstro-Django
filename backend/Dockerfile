@@ -1,18 +1,17 @@
 # Imagen base
 FROM python:3.11
 
-# Establecer el directorio de trabajo
+# Establecer directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar el código fuente de la app
+# Copiar los archivos del backend
 COPY backend/ /app/
 
-# Copiar y instalar dependencias
-COPY backend/requirements.txt /app/
+# Instalar dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Exponer el puerto
+# Exponer el puerto de Django
 EXPOSE 8000
 
-# Ejecutar Django
+# Comando para iniciar Django
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

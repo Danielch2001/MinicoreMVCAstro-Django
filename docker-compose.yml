@@ -2,28 +2,37 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
-    volumes:
-      - ./backend:/app
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: backend
     ports:
       - "8000:8000"
-    environment:
-      - DEBUG=True
+    volumes:
+      - ./backend:/app
     depends_on:
       - postgres_db
+    environment:
+      - DJANGO_SETTINGS_MODULE=backend.settings
+      - PYTHONUNBUFFERED=1
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
   postgres_db:
     image: postgres:15
+    container_name: postgres_db
+    restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydatabase
     ports:
       - "5432:5432"
 
   frontend:
-    build: ./frontend
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: frontend
     ports:
       - "4321:4321"
     volumes:
