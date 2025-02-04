@@ -48,10 +48,7 @@ pipeline {
                 sh 'docker-compose build backend'
                 
                 echo "📂 Verificando archivos en /app después de la construcción..."
-                sh '''
-                docker-compose run --rm backend ls -lah /app || true
-                docker-compose run --rm backend chmod +x /app/manage.py || true
-                '''
+                sh 'docker-compose run --rm backend ls -lah /app || true'
             }
         }
 
@@ -71,7 +68,9 @@ pipeline {
                 sh 'docker-compose up -d'
                 
                 echo "📌 Verificando estado de los contenedores..."
-                sh 'docker-compose ps'
+                sh '''
+                docker ps --format "table {{.Names}}\t{{.State}}\t{{.Ports}}"
+                '''
             }
         }
 
@@ -89,7 +88,6 @@ pipeline {
                 sh '''
                 docker-compose run --rm backend ls -lah /app || true
                 docker-compose run --rm backend find / -name "manage.py" || true
-                docker-compose run --rm backend find / -name "manage.py" -exec cat {} \\; || true
                 docker-compose logs backend || true
                 '''
             }
@@ -109,7 +107,6 @@ pipeline {
                 sh '''
                 docker-compose run --rm frontend ls -lah /app || true
                 docker-compose run --rm frontend find /app || true
-                docker-compose run --rm frontend cat /app/package.json || true
                 docker-compose logs frontend || true
                 '''
             }
