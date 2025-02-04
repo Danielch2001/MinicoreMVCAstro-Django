@@ -38,12 +38,13 @@ pipeline {
         stage('Verify Backend Files') {
     steps {
         echo "🛠️ Verificando archivos en el contenedor backend..."
-        sh 'docker-compose exec backend ls -lah /app || true'
-        sh 'docker-compose exec backend find /app || true'
-        sh 'docker-compose exec backend cat /app/manage.py || true'
+        sh 'docker-compose run --rm backend ls -lah /app || true'
+        sh 'docker-compose run --rm backend find /app || true'
+        sh 'docker-compose run --rm backend cat /app/manage.py || true'
         sh 'docker-compose logs backend'
     }
 }
+
 
 stage('Verify Frontend Files') {
     steps {
