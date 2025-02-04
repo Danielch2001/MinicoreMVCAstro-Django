@@ -46,8 +46,12 @@ pipeline {
             steps {
                 echo "🚀 Construyendo el backend..."
                 sh 'docker-compose build backend'
+                
                 echo "📂 Verificando archivos en /app después de la construcción..."
-                sh 'docker-compose run --rm backend ls -lah /app || true'
+                sh '''
+                docker-compose run --rm backend ls -lah /app || true
+                docker-compose run --rm backend chmod +x /app/manage.py || true
+                '''
             }
         }
 
@@ -55,6 +59,7 @@ pipeline {
             steps {
                 echo "🚀 Construyendo el frontend..."
                 sh 'docker-compose build frontend'
+                
                 echo "📂 Verificando archivos en /app después de la construcción..."
                 sh 'docker-compose run --rm frontend ls -lah /app || true'
             }
@@ -64,6 +69,8 @@ pipeline {
             steps {
                 echo "🚀 Iniciando los contenedores..."
                 sh 'docker-compose up -d'
+                
+                echo "📌 Verificando estado de los contenedores..."
                 sh 'docker-compose ps'
             }
         }
@@ -72,27 +79,48 @@ pipeline {
             steps {
                 echo "🛠️ Verificando archivos en el contenedor backend..."
                 
-                sh 'docker-compose run --rm backend ls -lah /app || true'
-                sh 'docker-compose run --rm backend find / -name "manage.py" || true'
-                sh 'docker-compose run --rm backend find / -name "manage.py" -exec cat {} \\; || true'
-                sh 'docker-compose logs backend'
+                script {
+                    def backendStatus = sh(script: "docker inspect -f '{{.State.Status}}' backend", returnStdout: true).trim()
+                    if (backendStatus != "running") {
+                        error "❌ El contenedor backend no está en ejecución."
+                    }
+                }
+
+                sh '''
+                docker-compose run --rm backend ls -lah /app || true
+                docker-compose run --rm backend find / -name "manage.py" || true
+                docker-compose run --rm backend find / -name "manage.py" -exec cat {} \\; || true
+                docker-compose logs backend || true
+                '''
             }
         }
 
         stage('Verify Frontend Files') {
             steps {
                 echo "🛠️ Verificando archivos en el contenedor frontend..."
-                sh 'docker-compose exec frontend ls -lah /app || true'
-                sh 'docker-compose exec frontend find /app || true'
-                sh 'docker-compose exec frontend cat /app/package.json || true'
-                sh 'docker-compose logs frontend'
+                
+                script {
+                    def frontendStatus = sh(script: "docker inspect -f '{{.State.Status}}' frontend", returnStdout: true).trim()
+                    if (frontendStatus != "running") {
+                        error "❌ El contenedor frontend no está en ejecución."
+                    }
+                }
+
+                sh '''
+                docker-compose run --rm frontend ls -lah /app || true
+                docker-compose run --rm frontend find /app || true
+                docker-compose run --rm frontend cat /app/package.json || true
+                docker-compose logs frontend || true
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
                 echo "🧪 Ejecutando pruebas en el backend..."
-                sh 'docker-compose exec backend pytest || true'
+                sh '''
+                docker-compose run --rm backend pytest || true
+                '''
             }
         }
     }
