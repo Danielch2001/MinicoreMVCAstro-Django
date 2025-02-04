@@ -1,45 +1,23 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: backend
-    restart: always
-    volumes:
-      - ./backend:/app
-    ports:
-      - "8000:8000"
-    environment:
-      - DJANGO_SETTINGS_MODULE=backend.settings
-      - PYTHONUNBUFFERED=1
-    depends_on:
-      - db
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend
-    restart: always
-    ports:
-      - "4321:4321"
-    depends_on:
-      - backend
-
-  db:
+  postgres_db:
     image: postgres:15
-    container_name: postgres_db
-    restart: always
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
-volumes:
-  postgres_data:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    volumes:
+      - ./backend:/app  # Mapea correctamente la carpeta backend en /app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres_db
+    command: ["python", "/app/manage.py", "runserver", "0.0.0.0:8000"]
