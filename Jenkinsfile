@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        GIT_REPO = 'https://github.com/Danielch2001/MinicoreMVCAstro-Django.git'
+        GIT_CREDENTIALS_ID = 'github-credentials'
+    }
+
     stages {
         stage('Pre-Build: Análisis Estático y Dependencias') {
             steps {
@@ -31,7 +36,7 @@ pipeline {
                 script {
                     checkout([$class: 'GitSCM',
                         branches: [[name: '*/main']],
-                        userRemoteConfigs: [[url: 'https://github.com/Danielch2001/MinicoreMVCAstro-Django.git']]
+                        userRemoteConfigs: [[url: GIT_REPO, credentialsId: GIT_CREDENTIALS_ID]]
                     ])
                 }
             }
@@ -142,14 +147,18 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Push to GitHub') {
             steps {
-                echo "🚀 Desplegando la aplicación..."
+                echo "🚀 Subiendo cambios a GitHub para que Railway los despliegue..."
                 sh '''
-                docker-compose up -d
+                git config --global user.email "tu-email@example.com"
+                git config --global user.name "Jenkins CI"
+                git add .
+                git commit -m "🚀 Auto-deploy desde Jenkins"
+                git push origin main
                 '''
             }
-        }
+        }        
     }
 
     post {
