@@ -2,6 +2,16 @@ pipeline {
     agent any
 
     stages {
+        stage('Cleanup Previous Containers') {
+            steps {
+                echo "🧹 Eliminando contenedores y volúmenes antiguos..."
+                sh '''
+                docker-compose down --volumes --remove-orphans || true
+                docker system prune -f || true
+                '''
+            }
+        }
+
         stage('Checkout') {
             steps {
                 script {
@@ -34,38 +44,26 @@ pipeline {
             }
         }
 
-        
-      stage('Verify Backend Files') {
-    steps {
-        echo "🛠️ Verificando archivos en el contenedor backend..."
-        
-        // Lista el contenido de /app para ver si manage.py está allí
-        sh 'docker-compose run --rm backend ls -lah /app || true'
-        
-        // Busca en todo el contenedor dónde está manage.py
-        sh 'docker-compose run --rm backend find / -name "manage.py" || true'
+        stage('Verify Backend Files') {
+            steps {
+                echo "🛠️ Verificando archivos en el contenedor backend..."
+                
+                sh 'docker-compose run --rm backend ls -lah /app || true'
+                sh 'docker-compose run --rm backend find / -name "manage.py" || true'
+                sh 'docker-compose run --rm backend find / -name "manage.py" -exec cat {} \\; || true'
+                sh 'docker-compose logs backend'
+            }
+        }
 
-        // Si encuentra el archivo, muestra su contenido para verificarlo
-        sh 'docker-compose run --rm backend find / -name "manage.py" -exec cat {} \\; || true'
-
-        // Muestra los logs del backend
-        sh 'docker-compose logs backend'
-    }
-}
-
-
-
-
-stage('Verify Frontend Files') {
-    steps {
-        echo "🛠️ Verificando archivos en el contenedor frontend..."
-        sh 'docker-compose exec frontend ls -lah /app || true'
-        sh 'docker-compose exec frontend find /app || true'
-        sh 'docker-compose exec frontend cat /app/package.json || true'
-        sh 'docker-compose logs frontend'
-    }
-}
-
+        stage('Verify Frontend Files') {
+            steps {
+                echo "🛠️ Verificando archivos en el contenedor frontend..."
+                sh 'docker-compose exec frontend ls -lah /app || true'
+                sh 'docker-compose exec frontend find /app || true'
+                sh 'docker-compose exec frontend cat /app/package.json || true'
+                sh 'docker-compose logs frontend'
+            }
+        }
 
         stage('Run Tests') {
             steps {
@@ -76,7 +74,11 @@ stage('Verify Frontend Files') {
 
     post {
         failure {
-            echo 'Build failed!'
+            echo '❌ Build failed! Limpiando posibles residuos...'
+            sh '''
+            docker-compose down --volumes --remove-orphans || true
+            docker system prune -f || true
+            '''
             sh 'docker-compose logs'
         }
     }
