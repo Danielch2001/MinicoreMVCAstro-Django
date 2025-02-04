@@ -11,8 +11,9 @@ COPY backend/backend /app/backend
 COPY backend/api /app/api
 COPY backend/populate_db.py /app/populate_db.py
 COPY backend/db.sqlite3 /app/db.sqlite3
-COPY backend/settings.py /app/settings.py
-COPY backend/urls.py /app/urls.py
-COPY backend/wsgi.py /app/wsgi.py
+COPY backend/backend/settings.py /app/settings.py
+COPY backend/backend/urls.py /app/urls.py
+COPY backend/backend/wsgi.py /app/wsgi.py
+
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

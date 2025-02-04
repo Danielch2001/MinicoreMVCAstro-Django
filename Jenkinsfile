@@ -23,22 +23,46 @@ pipeline {
             }
         }
 
+        stage('Detect Backend File Paths') {
+            steps {
+                script {
+                    def settingsPath = sh(script: "find backend -name settings.py", returnStdout: true).trim()
+                    def urlsPath = sh(script: "find backend -name urls.py", returnStdout: true).trim()
+                    def wsgiPath = sh(script: "find backend -name wsgi.py", returnStdout: true).trim()
+
+                    if (settingsPath && urlsPath && wsgiPath) {
+                        echo "✅ Archivos detectados correctamente:"
+                        echo "settings.py encontrado en: ${settingsPath}"
+                        echo "urls.py encontrado en: ${urlsPath}"
+                        echo "wsgi.py encontrado en: ${wsgiPath}"
+                    } else {
+                        error "❌ No se encontraron uno o más archivos críticos (settings.py, urls.py, wsgi.py). Verifica la estructura del proyecto."
+                    }
+                }
+            }
+        }
+
         stage('Build Backend') {
             steps {
+                echo "🚀 Construyendo el backend..."
                 sh 'docker-compose build backend'
-                sh 'docker-compose run --rm backend ls -l /app'
+                echo "📂 Verificando archivos en /app después de la construcción..."
+                sh 'docker-compose run --rm backend ls -lah /app || true'
             }
         }
 
         stage('Build Frontend') {
             steps {
+                echo "🚀 Construyendo el frontend..."
                 sh 'docker-compose build frontend'
-                sh 'docker-compose run --rm frontend ls -l /app'
+                echo "📂 Verificando archivos en /app después de la construcción..."
+                sh 'docker-compose run --rm frontend ls -lah /app || true'
             }
         }
 
         stage('Run Containers') {
             steps {
+                echo "🚀 Iniciando los contenedores..."
                 sh 'docker-compose up -d'
                 sh 'docker-compose ps'
             }
@@ -67,6 +91,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
+                echo "🧪 Ejecutando pruebas en el backend..."
                 sh 'docker-compose exec backend pytest || true'
             }
         }
