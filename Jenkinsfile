@@ -16,32 +16,32 @@ pipeline {
         stage('Build Backend') {
             steps {
                 sh 'docker-compose build backend'
-                sh 'docker-compose run --rm backend ls -l /app'  // Listar archivos en el contenedor backend
+                sh 'docker-compose run --rm backend ls -l /app'
             }
         }
 
         stage('Build Frontend') {
             steps {
                 sh 'docker-compose build frontend'
-                sh 'docker-compose run --rm frontend ls -l /app'  // Listar archivos en el contenedor frontend
+                sh 'docker-compose run --rm frontend ls -l /app'
             }
         }
 
         stage('Run Containers') {
             steps {
                 sh 'docker-compose up -d'
-                sh 'docker-compose ps'  // Verificar si los contenedores están corriendo
+                sh 'docker-compose ps'
             }
         }
 
-        stage('Debug Backend') {
+        stage('Verify Backend Files') {
             steps {
                 sh 'docker-compose exec backend ls -lah /app || true'
                 sh 'docker-compose exec backend find /app || true'
             }
         }
 
-        stage('Debug Frontend') {
+        stage('Verify Frontend Files') {
             steps {
                 sh 'docker-compose exec frontend ls -lah /app || true'
                 sh 'docker-compose exec frontend find /app || true'

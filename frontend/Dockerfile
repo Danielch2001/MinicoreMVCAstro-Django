@@ -2,8 +2,8 @@ FROM node:18
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package-lock.json /app/
 RUN npm install
 
-COPY . .
+COPY frontend/ /app/
 CMD ["npm", "run", "dev"]
