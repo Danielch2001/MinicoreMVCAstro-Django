@@ -21,3 +21,13 @@ services:
     depends_on:
       - postgres_db
     command: ["python", "/app/manage.py", "runserver", "0.0.0.0:8000"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "4321:4321"
+    command: ["npm", "run", "dev"]
