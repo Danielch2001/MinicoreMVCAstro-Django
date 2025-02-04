@@ -2,6 +2,20 @@ pipeline {
     agent any
 
     stages {
+        stage('Pre-Build: Análisis Estático y Dependencias') {
+            steps {
+                echo "🔍 Analizando código..."
+                sh '''
+                pip install --user flake8 pylint || true
+                npm install -g eslint || true
+                flake8 backend/ || true
+                pylint backend/ || true
+                eslint frontend/ || true
+                npm audit || true
+                '''
+            }
+        }
+
         stage('Cleanup Previous Containers') {
             steps {
                 echo "🧹 Eliminando contenedores y volúmenes antiguos..."
@@ -36,7 +50,7 @@ pipeline {
                         echo "urls.py encontrado en: ${urlsPath}"
                         echo "wsgi.py encontrado en: ${wsgiPath}"
                     } else {
-                        error "❌ No se encontraron uno o más archivos críticos (settings.py, urls.py, wsgi.py). Verifica la estructura del proyecto."
+                        error "❌ No se encontraron uno o más archivos críticos."
                     }
                 }
             }
@@ -68,9 +82,7 @@ pipeline {
                 sh 'docker-compose up -d'
                 
                 echo "📌 Verificando estado de los contenedores..."
-                sh '''
-                docker ps --format "table {{.Names}}\t{{.State}}\t{{.Ports}}"
-                '''
+                sh 'docker ps --format "table {{.Names}}\t{{.State}}\t{{.Ports}}"'
             }
         }
 
@@ -112,11 +124,29 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Backend Tests') {
             steps {
                 echo "🧪 Ejecutando pruebas en el backend..."
                 sh '''
                 docker-compose run --rm backend pytest || true
+                '''
+            }
+        }
+
+        stage('Run Frontend Tests') {
+            steps {
+                echo "🧪 Ejecutando pruebas en el frontend..."
+                sh '''
+                docker-compose run --rm frontend npm test || true
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "🚀 Desplegando la aplicación..."
+                sh '''
+                docker-compose up -d
                 '''
             }
         }
