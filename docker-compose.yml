@@ -5,17 +5,11 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    container_name: backend
-    ports:
-      - "8000:8000"
     volumes:
       - ./backend:/app
-    depends_on:
-      - postgres_db
-    environment:
-      - DJANGO_SETTINGS_MODULE=backend.settings
-      - PYTHONUNBUFFERED=1
-    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    ports:
+      - "8000:8000"
+
 
   postgres_db:
     image: postgres:15
@@ -28,13 +22,13 @@ services:
     ports:
       - "5432:5432"
 
+  services:
   frontend:
     build:
       context: .
       dockerfile: frontend/Dockerfile
-    container_name: frontend
-    ports:
-      - "4321:4321"
     volumes:
       - ./frontend:/app
-    command: ["npm", "run", "dev"]
+    ports:
+      - "4321:4321"
+
