@@ -11,7 +11,7 @@ document.getElementById('buscar-btn').addEventListener('click', async () => {
   
     try {
       // Construir la URL con los parámetros de consulta
-      const url = `https://backend-service.onrender.com/api/totales/?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`;
+      const url = `http://127.0.0.1:8000/api/totales/?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`;
       console.log(`Consultando API: ${url}`); // Solo para depuración
   
       // Realizar la solicitud al backend
