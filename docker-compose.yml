@@ -9,11 +9,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app  # Se mantiene el mapeo para desarrollo
+      - ./backend:/app  # Úsalo solo en desarrollo; en producción, elimínalo
     depends_on:
       - postgres_db
     restart: always
-
 
   frontend:
     build:
@@ -24,8 +23,6 @@ services:
       - "4321:4321"
     volumes:
       - ./frontend:/app  # Asegurar que está bien mapeado
-    depends_on:
-      - backend
     restart: always
 
   postgres_db:
