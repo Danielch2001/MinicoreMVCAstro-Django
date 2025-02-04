@@ -1,15 +1,15 @@
 pipeline {
     agent any
 
-    environment {
-        BACKEND_IMAGE = 'backend'
-        FRONTEND_IMAGE = 'frontend'
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Danielch2001/MinicoreMVCAstro-Django.git'
+                script {
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: '*/main']], // Asegurar que sea 'main' y no 'master'
+                        userRemoteConfigs: [[url: 'https://github.com/Danielch2001/MinicoreMVCAstro-Django.git']]
+                    ])
+                }
             }
         }
 
@@ -33,26 +33,21 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'docker exec backend pytest'
+                sh 'docker-compose exec backend pytest'
             }
         }
 
         stage('Cleanup') {
             steps {
-                sh 'docker system prune -f'
+                sh 'docker-compose down'
             }
         }
     }
 
     post {
-        always {
-            sh 'docker-compose logs'
-        }
         failure {
             echo 'Build failed!'
-        }
-        success {
-            echo 'Deployment successful!'
+            sh 'docker-compose logs'
         }
     }
 }
