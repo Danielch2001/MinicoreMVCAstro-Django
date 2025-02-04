@@ -47,6 +47,26 @@ pipeline {
                 sh 'docker-compose exec frontend find /app || true'
             }
         }
+        stage('Verify Backend Files') {
+    steps {
+        echo "🛠️ Verificando archivos en el contenedor backend..."
+        sh 'docker-compose exec backend ls -lah /app || true'
+        sh 'docker-compose exec backend find /app || true'
+        sh 'docker-compose exec backend cat /app/manage.py || true'
+        sh 'docker-compose logs backend'
+    }
+}
+
+stage('Verify Frontend Files') {
+    steps {
+        echo "🛠️ Verificando archivos en el contenedor frontend..."
+        sh 'docker-compose exec frontend ls -lah /app || true'
+        sh 'docker-compose exec frontend find /app || true'
+        sh 'docker-compose exec frontend cat /app/package.json || true'
+        sh 'docker-compose logs frontend'
+    }
+}
+
 
         stage('Run Tests') {
             steps {
