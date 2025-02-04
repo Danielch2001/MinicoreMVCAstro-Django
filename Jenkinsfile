@@ -33,11 +33,9 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'docker-compose exec backend pytest || true' // Agregar || true evita que el pipeline falle por errores en tests
+                sh 'docker-compose exec backend pytest || true' // Evita que el pipeline falle por errores en tests
             }
         }
-
-        
     }
 
     post {
