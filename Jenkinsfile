@@ -91,25 +91,7 @@ pipeline {
             }
         }
 
-        stage('Push to GitHub') {
-            steps {
-                echo "🚀 Subiendo cambios a GitHub para que Railway los despliegue..."
-                sh '''
-                git config --global user.email "tu-email@example.com"
-                git config --global user.name "Jenkins CI"
-                git add .
-                
-                if git diff --quiet && git diff --staged --quiet; then
-                    echo "⚠️ No hay cambios detectados, enviando un commit vacío..."
-                    git commit --allow-empty -m "🚀 Auto-deploy desde Jenkins (sin cambios)"
-                else
-                    git commit -m "🚀 Auto-deploy desde Jenkins"
-                fi
-
-                git push https://${GIT_CREDENTIALS_ID}@github.com/Danielch2001/MinicoreMVCAstro-Django.git HEAD:main
-                '''
-            }
-        }        
+              
     }
 
     post {
