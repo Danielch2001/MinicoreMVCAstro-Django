@@ -38,20 +38,21 @@ pipeline {
       stage('Verify Backend Files') {
     steps {
         echo "🛠️ Verificando archivos en el contenedor backend..."
-
-        // Lista el contenido de /app para ver qué archivos existen
+        
+        // Lista el contenido de /app para ver si manage.py está allí
         sh 'docker-compose run --rm backend ls -lah /app || true'
-
+        
         // Busca en todo el contenedor dónde está manage.py
         sh 'docker-compose run --rm backend find / -name "manage.py" || true'
 
-        // Si encuentra el archivo, muestra su contenido
+        // Si encuentra el archivo, muestra su contenido para verificarlo
         sh 'docker-compose run --rm backend find / -name "manage.py" -exec cat {} \\; || true'
 
-        // Verifica los logs del backend
+        // Muestra los logs del backend
         sh 'docker-compose logs backend'
     }
 }
+
 
 
 

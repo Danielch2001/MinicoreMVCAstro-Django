@@ -9,12 +9,11 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app  # Asegurar que está bien mapeado
-    environment:
-      - PYTHONUNBUFFERED=1
+      - ./backend:/app  # Se mantiene el mapeo para desarrollo
     depends_on:
       - postgres_db
     restart: always
+
 
   frontend:
     build:
